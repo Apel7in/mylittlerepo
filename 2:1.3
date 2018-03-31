@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int comp (const void *, const void *);
+
+int main()
+{
+    char supermass[100][1000];
+    char text[1000];
+    fgets(text, 1000, stdin);
+    int i, checking=0; int pred=0; int k=0;
+    for(i=0;i<strlen(text);i++)
+    {
+        if(text[i]=='.')
+        {
+            int j;
+            for(j=checking;j<=i;j++)
+            {
+                supermass[pred][k]=text[j];
+                k++;
+
+            }
+            pred++; k=0; checking=j;
+        }
+    }
+    int j; int siz[500]; int number[500];
+    for(j=0;j<pred;j++)
+    {
+        siz[j]=strlen(supermass[j]);
+    }
+
+    qsort (siz, pred, sizeof(int), comp);
+
+
+    int u; int y;
+    for(u=0;u<pred;u++)
+        for(y=0;y<pred;y++)
+    {
+        if(siz[u]==strlen(supermass[y]))
+        {
+            if(isspace(supermass[y][0]))
+            printf("%s",supermass[y]);
+            else printf(" %s",supermass[y]);
+        }
+   }
+
+
+
+
+
+
+    /*int w;
+    for(w=0;w<pred;w++)
+    {
+        printf("%s",ukaz[w]);
+    }
+*/
+    return 0;
+}
+
+comp (const void *x, const void *y)
+    {
+    return *(int*)x - *(int*)y;
+    }
