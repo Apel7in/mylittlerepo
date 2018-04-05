@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+int comp (const void * a, const void * b)
+{
+  return ( *(char**)a - *(char**)b );
+}
+int main()
+{
+    char mass[10][50];
+    int i;
+    for(i=0;i<10;i++)
+    fgets(mass[i],50,stdin);
+    printf("key:");
+    char key[50];
+    scanf("%s",&key);
+    char** result;
+
+   result = (char**) bsearch(&key,mass,10,sizeof(char**),comp);
+    if(result!=NULL)
+    printf("yes!");
+    else printf("no");
+
+
+    return 0;
+}
