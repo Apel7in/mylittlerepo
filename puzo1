@@ -1,0 +1,29 @@
+#include <stdio.h>;
+#include <stdlib.h>;
+#include <string.h>;
+
+int comp_i(const void *a, const void *b)
+{
+    return (int) a - (int) b;
+}
+
+int comp_f(const void *a, const void *b)
+{
+	return (float)a - (float) b;
+}
+
+int comp_c(const void* a, const void *b)
+{
+	strcmp((char*)a-(char*)b));
+}
+
+int main(){
+int a;
+printf("Колличество элементов? - ");
+scanf("%d",&a);
+
+char mass
+
+
+return 0;
+}
