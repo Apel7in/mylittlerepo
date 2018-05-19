@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <string.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <regex.h>
+#include <stdlib.h>
+
+int comp(const void *a,const void *b){
+	int i;
+	//int count1=0;
+	//int count2=0;
+	char* str1=*(char**)a;
+	char* str2=*(char**)b;
+	char num1[100000];
+	char num2[100000];
+
+	for(i=0;i<strlen(str1);i++){
+		if(str1[i]==' ')
+		break;
+		num1[i]=str1[i];
+	}
+
+	for(i=0;i<strlen(str1);i++){
+		if(str2[i]==' ')
+		break;
+		num2[i]=str2[i];
+	}
+
+	return atol(num1)-atol(num2);
+}
+
+
+void write(char *nextDir,char **buff,int *i){
+	char ch;
+	int k=0;
+	FILE *file=fopen(nextDir,"r");
+	buff[*i]=malloc(100*sizeof(char));
+	while(ch!='\n'){
+		fscanf(file,"%c",&ch);
+		if(ch=='\n')
+		break;
+		buff[*i][k]=ch;
+		k++;
+	}
+	fclose(file);
+	ch=' ';
+	*i=*i+1;
+
+	}
+int listDir(char *startDir,char **buf,int *count){
+	char nextDir[200]={0};
+	strcpy(nextDir, startDir);
+	DIR *dir = opendir(startDir);
+
+	if(!dir){
+		return;
+	}
+	struct dirent *de = readdir(dir);
+	while(de){
+		if(de->d_type == DT_DIR && strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
+			int len = strlen(nextDir);
+			strcat(nextDir, "/");
+			strcat(nextDir,de->d_name);
+			listDir(nextDir,buf,count);
+			nextDir[len] = '\0';
+			}
+		if(de->d_type == DT_REG ){
+			int len = strlen(nextDir);
+			strcat(nextDir, "/");
+			strcat(nextDir,de->d_name);
+			write(nextDir,buf,count);
+
+			nextDir[len] = '\0';
+			}
+		de = readdir(dir);
+			}
+	closedir(dir);
+	return 1;
+
+}
+
+int main(){
+	int i=0;
+	int count=0;
+	FILE* v = fopen("/home/apel7in/test/result.txt" , "w");
+	fclose(v);
+	char **buf=malloc(10*sizeof(char*));
+
+	while(i!=1){
+		i=listDir("/home/apel7in/test",buf,&count);
+	}
+	qsort(buf,count,sizeof(char**),comp);
+	FILE* file = fopen("/home/apel7in/test/result.txt" , "w");
+
+	for(i=0;i<count;i++){
+		fprintf (file,"%s\n",buf[i]);
+	}
+	fclose(file);
+
+	return 0;
+}
