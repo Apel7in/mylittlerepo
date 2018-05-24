@@ -8,11 +8,10 @@ int comp_i(const void *a, const void *b)
     return *(int*) a - *(int*) b;
 }
 
+
 int comp_f(const void *a, const void *b)
 {
-	float eps = 0.000001;
-    if (fabs(*(float*)b-*(float*)a) < eps)
-        return 0;
+
     if ((*(float*)a-*(float*)b) > 0)
         return 1;
     else
@@ -30,20 +29,22 @@ void swap(unsigned char *a, unsigned char *b, int size)
 {
     do
     {
-        unsigned char tmp = *a;
-        *a++ = *b;
-        *b++ = tmp;
-    } while(--size > 0);
+        unsigned char tmp;
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+        a++; b++; size--;
+    } while(size > 0);
 }
 
-void sort(void *array, int size, int elem_size, int (*comp)(const void *,const void *))
+void sort(void *ar, int size, int el_size, int (*comp)(const void *,const void *))
 {
     int i, j;
-    unsigned char *narray = (unsigned char *)array;
+    unsigned char *n = (unsigned char *)ar;
     for(i = 0; i < size; ++i)
         for(j = 0; j < size - i - 1; ++j)
-            if(comp(narray + j * elem_size, narray + (j + 1) * elem_size) > 0)
-                swap(narray + j * elem_size, narray + (j + 1) * elem_size, elem_size);
+            if(comp(n + j * el_size, n + (j + 1) * el_size) > 0)
+                swap(n + j * el_size, n + (j + 1) * el_size, el_size);
 }
 
 int main()
@@ -64,7 +65,7 @@ int main()
             scanf("%d",&arr[i]);
         sort(arr,N,sizeof(int),comp_i);
         for (i=0;i<N;i++)
-            printf("%d ",arr[i]);
+            printf("%d. %d\n",i+1,arr[i]);
     }
 
     //2-ЕСЛИ ФЛОАТ
@@ -75,7 +76,7 @@ int main()
             scanf(" %f",&arr[i]);
         sort(arr,N,sizeof(float),comp_f);
         for (i=0;i<N;i++)
-            printf("%g\n",arr[i]);
+            printf("%d. %g\n",i+1,arr[i]);
     }
 
     //3-ЕСЛИ ЧАР СО ЗВЕЗДОЧКОЙ
