@@ -1,29 +1,98 @@
-#include <stdio.h>;
-#include <stdlib.h>;
-#include <string.h>;
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 int comp_i(const void *a, const void *b)
 {
-    return (int) a - (int) b;
+    return *(int*) a - *(int*) b;
 }
 
 int comp_f(const void *a, const void *b)
 {
-	return (float)a - (float) b;
+	float eps = 0.000001;
+    if (fabs(*(float*)b-*(float*)a) < eps)
+        return 0;
+    if ((*(float*)a-*(float*)b) > 0)
+        return 1;
+    else
+        return -1;
 }
-
-int comp_c(const void* a, const void *b)
+int comp_str(const void*a, const void *b)
 {
-	strcmp((char*)a-(char*)b));
+    int d = strcmp(*(char**)a,*(char**)b);
+    int c = strlen(*(char **)a) - strlen(*(char **)b);
+    if(d == 0)  return c;
+        else return d;
 }
 
-int main(){
-int a;
-printf("Колличество элементов? - ");
-scanf("%d",&a);
+void swap(unsigned char *a, unsigned char *b, int size)
+{
+    do
+    {
+        unsigned char tmp = *a;
+        *a++ = *b;
+        *b++ = tmp;
+    } while(--size > 0);
+}
 
-char mass
+void sort(void *array, int size, int elem_size, int (*comp)(const void *,const void *))
+{
+    int i, j;
+    unsigned char *narray = (unsigned char *)array;
+    for(i = 0; i < size; ++i)
+        for(j = 0; j < size - i - 1; ++j)
+            if(comp(narray + j * elem_size, narray + (j + 1) * elem_size) > 0)
+                swap(narray + j * elem_size, narray + (j + 1) * elem_size, elem_size);
+}
 
+int main()
+{
+    int N = 5;
+    int i = 0;
+    int type;
+    printf("1 - int\n2 - float\n3 - char*\nSelect mode: ");
+    scanf("%d\n",&type);
 
-return 0;
+    //1-ЕСЛИ ИНТ
+
+    if (type==1)
+    {
+        int *arr = (int*) malloc(N*sizeof(int));
+        //int arr[N];
+        for (i=0;i<N;i++)
+            scanf("%d",&arr[i]);
+        sort(arr,N,sizeof(int),comp_i);
+        for (i=0;i<N;i++)
+            printf("%d ",arr[i]);
+    }
+
+    //2-ЕСЛИ ФЛОАТ
+    if (type==2)
+    {
+        float *arr = (float*)malloc(N*sizeof(float));
+        for (i=0;i<N;i++)
+            scanf(" %f",&arr[i]);
+        sort(arr,N,sizeof(float),comp_f);
+        for (i=0;i<N;i++)
+            printf("%g\n",arr[i]);
+    }
+
+    //3-ЕСЛИ ЧАР СО ЗВЕЗДОЧКОЙ
+    if (type==3)
+    {
+        char **arr = (char**) malloc(N*sizeof(char*));
+        for (i=0;i<N;i++)
+        {
+            arr[i] = (char*)malloc(50*sizeof(char));
+            fgets(arr[i],50,stdin);
+            arr[i][strlen(arr[i]) - 1] = '\0';
+        }
+        sort(arr,N,sizeof(char*),comp_str);
+            printf("Result:\n");
+        for (i=0;i<N;i++)
+            printf("%d. %s\n",i+1,arr[i]);
+
+    }
+    return 0;
 }
