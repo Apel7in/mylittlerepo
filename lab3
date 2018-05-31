@@ -1,59 +1,63 @@
+
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <regex.h>
 #include <stdlib.h>
+#include <ctype.h>
+
+struct rt{
+long int x;
+char str[1000];
+};
 
 int comp(const void *a,const void *b){
+	return (((const struct rt *)a)->x-((const struct rt *)b)->x);
+}
+/*
+int comp(const void *a,const void *b){
 	int i;
-	//int count1=0;
-	//int count2=0;
 	char* str1=*(char**)a;
 	char* str2=*(char**)b;
-	char num1[100000];
-	char num2[100000];
+
+	char num1[100];
+	char num2[100];
 
 	for(i=0;i<strlen(str1);i++){
-		if(str1[i]==' ')
-		break;
+		if(isdigit(str1[i]))
 		num1[i]=str1[i];
+		if(isspace(str1[i])) break;
 	}
 
 	for(i=0;i<strlen(str1);i++){
-		if(str2[i]==' ')
-		break;
-		num2[i]=str2[i];
+		if(isspace(str2[i]))
+			break;
+		if(isdigit(str2[i]))
+			num2[i]=str2[i];
 	}
+		if(atoi(num1)>atoi(num2)) return 1;
+	else return -1;
+	return 0;//atoi(num1)-atoi(num2);
+}
+*/
 
-	return atol(num1)-atol(num2);
+void writel(char *nextDir,struct rt* buff /*char **buff*/,int *i){
+	FILE *file=fopen(nextDir,"r");
+	//fgets(buff[*i],100,file);
+	fscanf(file, "%ld", &buff[*i].x);
+	fgets(buff[*i].str,1000,file);
+	fclose(file);
+	*i=*i+1;
 }
 
-
-void write(char *nextDir,char **buff,int *i){
-	char ch;
-	int k=0;
-	FILE *file=fopen(nextDir,"r");
-	buff[*i]=malloc(100*sizeof(char));
-	while(ch!='\n'){
-		fscanf(file,"%c",&ch);
-		if(ch=='\n')
-		break;
-		buff[*i][k]=ch;
-		k++;
-	}
-	fclose(file);
-	ch=' ';
-	*i=*i+1;
-
-	}
-int listDir(char *startDir,char **buf,int *count){
+int listDir(char *startDir,struct rt* buf /*char **buf*/,int* count){
 	char nextDir[200]={0};
 	strcpy(nextDir, startDir);
 	DIR *dir = opendir(startDir);
 
 	if(!dir){
-		return;
+		return 0;
 	}
 	struct dirent *de = readdir(dir);
 	while(de){
@@ -68,7 +72,7 @@ int listDir(char *startDir,char **buf,int *count){
 			int len = strlen(nextDir);
 			strcat(nextDir, "/");
 			strcat(nextDir,de->d_name);
-			write(nextDir,buf,count);
+			writel(nextDir,buf,count);
 
 			nextDir[len] = '\0';
 			}
@@ -76,26 +80,35 @@ int listDir(char *startDir,char **buf,int *count){
 			}
 	closedir(dir);
 	return 1;
-
 }
 
+
+
 int main(){
-	int i=0;
+	int i=0; 
 	int count=0;
-	FILE* v = fopen("/home/apel7in/test/result.txt" , "w");
-	fclose(v);
-	char **buf=malloc(10*sizeof(char*));
+/*	char **buff;
+	buff=(char**)malloc(10*sizeof(char*));
+	for(int j=0;j<10;j++)
+	{
+	buff[j]=(char*)malloc(100*sizeof(char));
+	}
+	*/struct rt* mass=(struct rt *)malloc(10000*sizeof(struct rt));
+
 
 	while(i!=1){
-		i=listDir("/home/apel7in/test",buf,&count);
+		i=listDir("/home/apel7in/test",mass,&count);
 	}
-	qsort(buf,count,sizeof(char**),comp);
+
+
+	qsort(mass,count,sizeof(struct rt),comp);
 	FILE* file = fopen("/home/apel7in/test/result.txt" , "w");
-
 	for(i=0;i<count;i++){
-		fprintf (file,"%s\n",buf[i]);
-	}
+		fprintf (file,"%ld %s\n",mass[i].x,mass[i].str);
+}
 	fclose(file);
-
+//	for(int j=0;j<10;j++)
+//	free(buff[j]);
+	free(mass);
 	return 0;
 }
