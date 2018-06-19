@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1529434044 source:d:\special blocks\progs\ex6\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+

@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1529438657 source:d:\special blocks\progs\ex8\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+
